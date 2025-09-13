@@ -57,8 +57,13 @@ const PatientRegistration = () => {
         qrId: newQrId,
         registrationDate: new Date()?.toISOString(),
         status: 'registered',
-        screeningStatus: 'pending'
+        screeningStatus: 'pending',
+        registeredBy: 'Dr. Sarah Kumar'
       };
+      
+      // Save the new patient to localStorage
+      const existingPatients = JSON.parse(localStorage.getItem('patients') || '[]');
+      localStorage.setItem('patients', JSON.stringify([...existingPatients, patientData]));
       
       // Update stats
       setStats(prev => ({

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import { Checkbox } from '../../../components/ui/Checkbox';
@@ -11,9 +11,8 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
-    setValue,
-    trigger
+    control,
+    watch
   } = useForm({
     defaultValues: {
       name: '',
@@ -26,8 +25,6 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
       consent: false
     }
   });
-
-  const [consentChecked, setConsentChecked] = useState(false);
 
   const sexOptions = [
     { value: 'male', label: 'Male' },
@@ -58,16 +55,7 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
     { value: 'kasaragod', label: 'Kasaragod' }
   ];
 
-  const handleConsentChange = (checked) => {
-    setConsentChecked(checked);
-    setValue('consent', checked);
-    trigger('consent');
-  };
-
   const onFormSubmit = (data) => {
-    if (!consentChecked) {
-      return;
-    }
     onSubmit(data);
   };
 
@@ -109,20 +97,20 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
               })}
             />
 
-            <Select
-              label="Sex"
-              placeholder="Select sex"
-              options={sexOptions}
-              required
-              error={errors?.sex?.message}
-              value={watch('sex')}
-              onChange={(value) => {
-                setValue('sex', value);
-                trigger('sex');
-              }}
-              {...register('sex', {
-                required: 'Sex selection is required'
-              })}
+            <Controller
+              name="sex"
+              control={control}
+              rules={{ required: 'Sex selection is required' }}
+              render={({ field }) => (
+                <Select
+                  label="Sex"
+                  placeholder="Select sex"
+                  options={sexOptions}
+                  required
+                  error={errors?.sex?.message}
+                  {...field}
+                />
+              )}
             />
           </div>
 
@@ -162,20 +150,20 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
             />
           </div>
 
-          <Select
-            label="Preferred Language"
-            placeholder="Select preferred language"
-            options={languageOptions}
-            required
-            error={errors?.language?.message}
-            value={watch('language')}
-            onChange={(value) => {
-              setValue('language', value);
-              trigger('language');
-            }}
-            {...register('language', {
-              required: 'Language selection is required'
-            })}
+          <Controller
+            name="language"
+            control={control}
+            rules={{ required: 'Language selection is required' }}
+            render={({ field }) => (
+              <Select
+                label="Preferred Language"
+                placeholder="Select preferred language"
+                options={languageOptions}
+                required
+                error={errors?.language?.message}
+                {...field}
+              />
+            )}
           />
         </div>
 
@@ -200,21 +188,21 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
             })}
           />
 
-          <Select
-            label="District"
-            placeholder="Select district"
-            options={districtOptions}
-            required
-            searchable
-            error={errors?.district?.message}
-            value={watch('district')}
-            onChange={(value) => {
-              setValue('district', value);
-              trigger('district');
-            }}
-            {...register('district', {
-              required: 'District selection is required'
-            })}
+          <Controller
+            name="district"
+            control={control}
+            rules={{ required: 'District selection is required' }}
+            render={({ field }) => (
+              <Select
+                label="District"
+                placeholder="Select district"
+                options={districtOptions}
+                required
+                searchable
+                error={errors?.district?.message}
+                {...field}
+              />
+            )}
           />
         </div>
 
@@ -241,16 +229,23 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
             </div>
           </div>
 
-          <Checkbox
-            label="I provide my digital consent for health data collection and processing"
-            description="This consent is required to proceed with registration and health screening"
-            required
-            error={errors?.consent?.message}
-            checked={consentChecked}
-            onChange={(e) => handleConsentChange(e?.target?.checked)}
-            {...register('consent', {
-              required: 'Digital consent is required to proceed'
-            })}
+          <Controller
+            name="consent"
+            control={control}
+            rules={{
+              validate: value => value === true || 'Digital consent is required to proceed'
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Checkbox
+                label="I provide my digital consent for health data collection and processing"
+                description="This consent is required to proceed with registration and health screening"
+                required
+                error={errors?.consent?.message}
+                checked={value}
+                onChange={onChange}
+                ref={ref}
+              />
+            )}
           />
         </div>
 
@@ -261,7 +256,7 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
             variant="default"
             size="lg"
             loading={isSubmitting}
-            disabled={!consentChecked || isSubmitting}
+            disabled={isSubmitting}
             iconName="UserPlus"
             iconPosition="left"
             className="min-w-48"

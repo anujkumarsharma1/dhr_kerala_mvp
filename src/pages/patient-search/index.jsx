@@ -28,6 +28,7 @@ const PatientSearch = () => {
   const [sortField, setSortField] = useState('registrationDate');
   const [sortDirection, setSortDirection] = useState('desc');
   const [userRole] = useState('field-worker'); // Mock user role
+  const [allPatients, setAllPatients] = useState([]);
 
   // Mock patient data
   const mockPatients = [
@@ -145,6 +146,11 @@ const PatientSearch = () => {
     }
   ];
 
+  useEffect(() => {
+    const storedPatients = JSON.parse(localStorage.getItem('patients') || '[]');
+    setAllPatients([...mockPatients, ...storedPatients]);
+  }, []);
+
   // Get search query from URL params
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -156,7 +162,7 @@ const PatientSearch = () => {
 
   // Filter and search logic
   const filteredPatients = useMemo(() => {
-    let filtered = [...mockPatients];
+    let filtered = [...allPatients];
 
     // Apply search query
     if (searchQuery?.trim()) {
@@ -241,7 +247,7 @@ const PatientSearch = () => {
     });
 
     return filtered;
-  }, [searchQuery, filters, sortField, sortDirection, userRole]);
+  }, [searchQuery, filters, sortField, sortDirection, userRole, allPatients]);
 
   // Pagination logic
   const itemsPerPage = 10;
@@ -354,7 +360,7 @@ const PatientSearch = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Total Patients</p>
                   <p className="text-lg font-semibold text-foreground">
-                    {userRole === 'admin' ? mockPatients?.length : mockPatients?.filter(p => p?.registeredBy === 'Dr. Sarah Kumar')?.length}
+                    {userRole === 'admin' ? allPatients?.length : allPatients?.filter(p => p?.registeredBy === 'Dr. Sarah Kumar')?.length}
                   </p>
                 </div>
               </div>
@@ -365,7 +371,7 @@ const PatientSearch = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">TB Suspected</p>
                   <p className="text-lg font-semibold text-foreground">
-                    {mockPatients?.filter(p => p?.screeningStatus === 'suspected')?.length}
+                    {allPatients?.filter(p => p?.screeningStatus === 'suspected')?.length}
                   </p>
                 </div>
               </div>
@@ -376,7 +382,7 @@ const PatientSearch = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Pending Screen</p>
                   <p className="text-lg font-semibold text-foreground">
-                    {mockPatients?.filter(p => p?.screeningStatus === 'not_screened')?.length}
+                    {allPatients?.filter(p => p?.screeningStatus === 'not_screened')?.length}
                   </p>
                 </div>
               </div>
@@ -387,7 +393,7 @@ const PatientSearch = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Referred</p>
                   <p className="text-lg font-semibold text-foreground">
-                    {mockPatients?.filter(p => p?.screeningStatus === 'referred')?.length}
+                    {allPatients?.filter(p => p?.screeningStatus === 'referred')?.length}
                   </p>
                 </div>
               </div>
