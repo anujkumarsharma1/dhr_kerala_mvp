@@ -12,6 +12,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 2000,
   },
   plugins: [tsconfigPaths(), react(), tagger()],
+  base: "/dhr_kerala_mvp",
   server: {
     port: "4028",
     host: "0.0.0.0",

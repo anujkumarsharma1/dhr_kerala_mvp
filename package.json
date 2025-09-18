@@ -1,5 +1,6 @@
 {
   "name": "dhr-kerala-mvp",
+  "homepage": "https://anujkumarsharma1.github.io/dhr_kerala_mvp/",
   "version": "0.1.0",
   "private": true,
   "rocketCritical": {
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "@dhiwise/component-tagger": "^1.0.10",
+    "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/forms": "^0.5.7",
@@ -41,6 +43,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.0.1",
     "framer-motion": "^10.16.4",
+    "gh-pages": "^6.3.0",
     "lucide-react": "^0.484.0",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
@@ -60,7 +63,9 @@
     "dev": "vite",
     "start": "vite",
     "build": "vite build --sourcemap",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
